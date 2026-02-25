@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-neutral-950 text-white">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHAOS SEED GEN • Only Broken, Strange & Epic</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    .minecraft-font { font-family: 'Press Start 2P', system-ui; }
+    .seed-display { font-family: monospace; letter-spacing: 6px; font-size: 2.25rem; }
+    .glitch { animation: glitch 0.8s linear infinite; }
+    @keyframes glitch { 2%,64%{transform:translate(2px,0)skew(0deg)} 4%,60%{transform:translate(-2px,0)skew(0deg)} 62%{transform:translate(0,0)skew(5deg)} }
+    .tab-active { border-bottom: 4px solid #22c55e; color: #86efac; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 bg-neutral-950">
+  <div class="max-w-3xl w-full mx-auto bg-neutral-900 border-4 border-green-500 rounded-3xl shadow-2xl overflow-hidden">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 p-8 text-center border-b-4 border-green-400">
+      <div class="flex items-center justify-center gap-4 mb-3">
+        <i class="fas fa-skull-crossbones text-5xl"></i>
+        <h1 class="minecraft-font text-5xl tracking-[6px]">CHAOS SEED GEN</h1>
+      </div>
+      <p class="text-green-100 text-xl">Chunkbase-style + ONLY the most broken, strange & epic seeds</p>
+      <p class="text-xs text-green-300 mt-2">1.21+ • Java & Bedrock • Made for Kiki_DrocassTTV</p>
+    </div>
+
+    <div class="p-8">
+      <!-- Tabs -->
+      <div class="flex border-b border-green-800 mb-6">
+        <button onclick="switchTab(0)" id="tab-java" class="tab-active flex-1 py-4 font-bold text-lg flex items-center justify-center gap-2"><i class="fab fa-java"></i> JAVA</button>
+        <button onclick="switchTab(1)" id="tab-bedrock" class="flex-1 py-4 font-bold text-lg flex items-center justify-center gap-2"><i class="fas fa-mobile-alt"></i> BEDROCK</button>
+      </div>
+
+      <div class="flex border-b border-green-800 mb-8">
+        <button onclick="switchMode(0)" id="mode-curated" class="tab-active flex-1 py-3 font-bold text-sm">CURATED EPIC ONLY</button>
+        <button onclick="switchMode(1)" id="mode-random" class="flex-1 py-3 font-bold text-sm">RANDOM EXPLORER (Infinite)</button>
+      </div>
+
+      <button onclick="generateSeed()" class="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 py-7 text-3xl rounded-2xl font-bold flex items-center justify-center gap-4 shadow-2xl">
+        <i class="fas fa-dice"></i> <span id="generateText">ROLL CHAOS SEED</span>
+      </button>
+
+      <!-- Result -->
+      <div id="result" class="hidden mt-10 bg-neutral-950 border-2 border-green-500/70 rounded-3xl p-8">
+        <div class="flex justify-between mb-6">
+          <div>
+            <div class="uppercase text-green-400 text-xs tracking-widest mb-1"><span id="modeLabel">CURATED EPIC</span> • WORLD #<span id="rollCount">1</span></div>
+            <div id="seed" onclick="copySeed()" class="seed-display text-green-400 cursor-pointer hover:text-white break-all select-all"></div>
+            <div onclick="copySeed()" class="text-xs text-green-500 flex items-center gap-2 cursor-pointer mt-1 hover:text-green-300"><i class="fas fa-copy"></i> CLICK TO COPY</div>
+          </div>
+          <div class="text-right">
+            <div id="editionBadge" class="px-6 py-2 text-sm font-bold rounded-2xl bg-emerald-900 text-emerald-200 inline-flex items-center gap-2"></div>
+            <div id="categoryBadge" class="mt-3 px-4 py-1 text-xs font-mono bg-neutral-800 text-neutral-300 rounded-xl"></div>
+          </div>
+        </div>
+
+        <div id="seedImageContainer" class="mb-6 rounded-2xl overflow-hidden border border-green-800 hidden">
+          <img id="seedImage" class="w-full h-auto" alt="Seed screenshot">
+        </div>
+
+        <div class="mb-8">
+          <div id="name" class="text-3xl font-bold text-white minecraft-font tracking-wider"></div>
+          <div id="desc" class="text-neutral-400 leading-relaxed mt-3 text-lg"></div>
+        </div>
+
+        <!-- Map viewer links (the "detection" part) -->
+        <div class="bg-neutral-900 rounded-2xl p-5 border border-green-800 mb-8">
+          <div class="text-green-400 text-xs uppercase tracking-widest mb-3">CHECK FOR EXCESS VILLAGES / TREASURE / RARE FEATURES</div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <a id="chunkbaseLink" href="#" target="_blank" class="flex items-center justify-center gap-2 bg-neutral-800 hover:bg-green-900 py-4 rounded-xl text-sm font-bold">📍 CHUNKBASE</a>
+            <a id="mcseedmapLink" href="#" target="_blank" class="flex items-center justify-center gap-2 bg-neutral-800 hover:bg-green-900 py-4 rounded-xl text-sm font-bold">🌍 MCSEEDMAP</a>
+            <a id="seedsggLink" href="#" target="_blank" class="flex items-center justify-center gap-2 bg-neutral-800 hover:bg-green-900 py-4 rounded-xl text-sm font-bold">🌐 SEEDS.GG</a>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button onclick="generateSeed()" class="flex-1 bg-neutral-800 hover:bg-neutral-700 py-5 rounded-2xl font-bold flex items-center justify-center gap-3"><i class="fas fa-redo"></i> ANOTHER ONE</button>
+          <a href="https://www.minecraft.net/" target="_blank" class="flex-1 bg-green-600 hover:bg-green-700 py-5 rounded-2xl font-bold flex items-center justify-center gap-3"><i class="fas fa-play"></i> PLAY IN 1.21+</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const javaCurated = [
+      {seed:"8486672581758651406",name:"HOLLOW MOUNTAIN OF LUSH CHAOS",desc:"Massive hollow mountain packed with lush caves + mansion next door. Looks 100% modded.",category:"broken",image:"https://assetsio.gnwcdn.com/minecraft-seed-8486672581758651406.jpg?width=2048",edition:"Java"},
+      {seed:"-7286370756041736131",name:"PALE GARDEN MANSION",desc:"Full woodland mansion in eerie pale garden biome.",category:"strange",image:"https://assetsio.gnwcdn.com/minecraft-seed-minus-7286370756041736131.jpg?width=2048",edition:"Java"},
+      {seed:"-4651105460712845864",name:"RAVINE TO ANCIENT CITY",desc:"Spawn ravine drops straight into deep dark ancient city.",category:"broken",edition:"Java"},
+      {seed:"2482490754905255652",name:"LUSH CAVE DESERT TEMPLE",desc:"Desert temple buried deep in lush caves.",category:"broken",edition:"Java"},
+      {seed:"-6717069237572499903",name:"VILLAGE INSIDE ANCIENT CITY",desc:"Full village spawns inside ancient city — rarest combo ever.",category:"broken",edition:"Java"}
+    ];
+
+    const bedrockCurated = [
+      {seed:"5423500280331580709",name:"TAIGA RIFT",desc:"Huge rift with witch huts + zombie village.",category:"broken",edition:"Bedrock"},
+      {seed:"1816648670920646980",name:"CHERRY BLOSSOM PARADISE",desc:"Endless cherry groves + villages at spawn.",category:"epic",edition:"Bedrock"},
+      {seed:"-1218673118661736837",name:"SURFACE ANCIENT CITIES BADLANDS",desc:"Badlands packed with surface ancient cities.",category:"broken",edition:"Bedrock"},
+      {seed:"-3173136518338547511",name:"SHIPWRECKED PILLAGER OUTPOST",desc:"Shipwreck crashed into pillager outpost.",category:"strange",edition:"Bedrock"}
+    ];
+
+    let currentEdition = 0, currentMode = 0, rollCounter = 1;
+
+    function switchTab(t){ currentEdition = t; document.getElementById('tab-java').classList.toggle('tab-active',t===0); document.getElementById('tab-bedrock').classList.toggle('tab-active',t===1); generateSeed(); }
+    function switchMode(m){ currentMode = m; document.getElementById('mode-curated').classList.toggle('tab-active',m===0); document.getElementById('mode-random').classList.toggle('tab-active',m===1); document.getElementById('generateText').textContent = m===0 ? "ROLL CURATED EPIC" : "ROLL RANDOM EXPLORER"; }
+
+    function randomMinecraftSeed(){ const s = BigInt(Math.floor(Math.random()*0x10000000000000000n)); return (Math.random()>0.5 ? "-" : "") + s.toString(); }
+
+    function generateSeed(){
+      let seedData;
+      if(currentMode===0){
+        const list = currentEdition===0 ? javaCurated : bedrockCurated;
+        seedData = list[Math.floor(Math.random()*list.length)];
+      } else {
+        seedData = {seed:randomMinecraftSeed(), name:"RANDOM EXPLORER SEED", desc:"Open the map links below and zoom out — look for clusters of villages, ancient cities, trial chambers, etc. Reroll until it's completely broken!", category:"random", edition:currentEdition===0?"Java":"Bedrock", image:null};
+      }
+
+      document.getElementById('seed').textContent = seedData.seed;
+      document.getElementById('name').textContent = seedData.name;
+      document.getElementById('desc').textContent = seedData.desc;
+      document.getElementById('editionBadge').innerHTML = `<i class="fas fa-${seedData.edition==='Java'?'cube':'mobile-alt'}"></i> ${seedData.edition}`;
+      document.getElementById('categoryBadge').textContent = (seedData.category||"EPIC").toUpperCase();
+      document.getElementById('rollCount').textContent = rollCounter++;
+      document.getElementById('modeLabel').textContent = currentMode===0?"CURATED EPIC":"RANDOM EXPLORER";
+
+      const imgC = document.getElementById('seedImageContainer');
+      if(seedData.image){ document.getElementById('seedImage').src=seedData.image; imgC.classList.remove('hidden'); }
+      else imgC.classList.add('hidden');
+
+      const s = encodeURIComponent(seedData.seed);
+      document.getElementById('chunkbaseLink').href = `https://www.chunkbase.com/apps/seed-map#seed=${s}&platform=${currentEdition===0?'java_1_21':'bedrock_1_21'}&dimension=overworld`;
+      document.getElementById('mcseedmapLink').href = `https://mcseedmap.net/?seed=${s}`;
+      document.getElementById('seedsggLink').href = `https://www.seeds.gg/?seed=${s}`;
+
+      const r = document.getElementById('result'); r.classList.remove('hidden'); r.classList.add('glitch'); setTimeout(()=>r.classList.remove('glitch'),800);
+    }
+
+    function copySeed(){
+      navigator.clipboard.writeText(document.getElementById('seed').textContent).then(()=>{
+        const el=document.getElementById('seed'); const orig=el.innerHTML; el.innerHTML='✅ COPIED!'; setTimeout(()=>el.innerHTML=orig,1500);
+      });
+    }
+
+    window.onload = ()=>{ switchTab(0); switchMode(0); setTimeout(generateSeed,400); };
+  </script>
+</body>
+</html>
